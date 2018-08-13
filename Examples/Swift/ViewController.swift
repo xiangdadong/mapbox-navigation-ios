@@ -7,7 +7,7 @@ import Mapbox
 private typealias RouteRequestSuccess = (([Route]) -> Void)
 private typealias RouteRequestFailure = ((NSError) -> Void)
 
-class ViewController: UIViewController, MGLMapViewDelegate {
+class ViewController: UIViewController {
     
     // MARK: - IBOutlets
     @IBOutlet weak var longPressHintView: UIView!
@@ -185,6 +185,7 @@ class ViewController: UIViewController, MGLMapViewDelegate {
 
         let navigationViewController = NavigationViewController(for: route, locationManager: navigationLocationManager())
         navigationViewController.delegate = self
+        navigationViewController.mapView?.delegate = self
 
         presentAndRemoveMapview(navigationViewController)
     }
@@ -255,8 +256,14 @@ class ViewController: UIViewController, MGLMapViewDelegate {
         mapView.gestureRecognizers?.filter({ $0 is UILongPressGestureRecognizer }).forEach(singleTap.require(toFail:))
         mapView.addGestureRecognizer(singleTap)
     }
-    
+}
+
+extension ViewController: MGLMapViewDelegate {
     func mapView(_ mapView: MGLMapView, didFinishLoading style: MGLStyle) {
+        guard mapView == self.mapView else {
+            return
+        }
+        
         self.mapView?.localizeLabels()
         
         if let routes = routes, let currentRoute = routes.first, let coords = currentRoute.coordinates {
@@ -264,6 +271,20 @@ class ViewController: UIViewController, MGLMapViewDelegate {
             self.mapView?.showRoutes(routes)
             self.mapView?.showWaypoints(currentRoute)
         }
+    }
+    
+    func mapViewDidFinishLoadingMap(_ mapView: MGLMapView) {
+        // Demonstrate adding an interactive annotation to the map in NavigationViewController.
+        if let coordinate = routes?.first?.legs.first?.steps.first?.coordinates?.last {
+            let annotation = MGLPointAnnotation()
+            annotation.coordinate = coordinate
+            annotation.title = "End of First Step"
+            mapView.addAnnotation(annotation)
+        }
+    }
+    
+    func mapView(_ mapView: MGLMapView, annotationCanShowCallout annotation: MGLAnnotation) -> Bool {
+        return mapView != self.mapView
     }
 }
 

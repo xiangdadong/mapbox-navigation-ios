@@ -2,6 +2,7 @@
 
 ## master
 
+* It is now safe to set the `NavigationMapView.delegate` property of the `NavigationMapView` in `NavigationViewController.mapView`. Implement `MGLMapViewDelegate` in your own class to customize annotations and other details. ([#1601](https://github.com/mapbox/mapbox-navigation-ios/pull/1601))
 * Added the `shouldManageApplicationIdleTimer` flag to `NavigationViewController` to allow applications to opt out of automatic `UIApplication.isIdleTimerDisabled` management. ([#1591](https://github.com/mapbox/mapbox-navigation-ios/pull/1591))
 * Fixed an issue where the banner was stuck on rerouting past the reroute threshold, when navigation was set to simulation mode. ([#1583](https://github.com/mapbox/mapbox-navigation-ios/pull/1583))
 * Modified the label at the bottom of the map to display the route shield in addition to the road name. ([#1576](https://github.com/mapbox/mapbox-navigation-ios/pull/1576)) 

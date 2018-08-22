@@ -21,7 +21,7 @@ public protocol NavigationService: CLLocationManagerDelegate, RouterDataSource, 
     var eventsManager: EventsManager! { get }
     var route: Route { get set }
     weak var delegate: NavigationServiceDelegate? { get set }
-    
+
     func start()
     func stop()
     func endNavigation(feedback: EndOfRouteFeedback?)
@@ -51,10 +51,11 @@ public class MapboxNavigationService: NSObject, NavigationService {
     }
     
     @objc required public init(route: Route,
-                  directions: Directions? = nil,
-                  locationSource: NavigationLocationManager? = nil,
-                  eventsManagerType: EventsManager.Type? = nil,
-                  simulating simulationMode: SimulationOption = .onPoorGPS)
+                               directions: Directions? = nil,
+                               locationSource: NavigationLocationManager? = nil,
+                               eventsManagerType: EventsManager.Type? = nil,
+                               simulating simulationMode: SimulationOption = .onPoorGPS,
+                               routerType: Router.Type? = RouteController.self)
     {
         nativeLocationSource = locationSource ?? NavigationLocationManager()
         self.directions = directions ?? Directions.shared
@@ -62,7 +63,9 @@ public class MapboxNavigationService: NSObject, NavigationService {
         super.init()
         resumeNotifications()
         poorGPSTimer = CountdownTimer(countdown: MapboxNavigationService.poorGPSPatience, payload: timerPayload)
-        router = RouteController(along: route, directions: self.directions, dataSource: self)
+        let routerType = routerType ?? RouteController.self
+        router = routerType.init(along: route, directions: self.directions, dataSource: self)
+        
         let eventType = eventsManagerType ?? EventsManager.self
         eventsManager = eventType.init(dataSource: self, accessToken: route.accessToken)
         locationManager.activityType = route.routeOptions.activityType

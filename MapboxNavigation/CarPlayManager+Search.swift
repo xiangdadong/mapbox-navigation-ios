@@ -33,6 +33,7 @@ extension CarPlayManager: CPSearchTemplateDelegate {
         
         let section = CPListSection(items: extendedItems)
         let template = CPListTemplate(title: CarPlayManager.shared.recentSearchText, sections: [section])
+        template.delegate = self
         
         interfaceController?.pushTemplate(template, animated: true)
     }

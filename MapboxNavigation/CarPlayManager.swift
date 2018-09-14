@@ -107,6 +107,16 @@ public class CarPlayManager: NSObject {
         shared = CarPlayManager()
     }
     
+    /**
+     Holds the most recent search results
+     */
+    var recentSearchItems: [CPListItem]?
+    
+    /**
+     Hold the most recent search text
+     */
+    var recentSearchText: String?
+    
     private var defaultMapButtons: [CPMapButton]?
     
     /**
